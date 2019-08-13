@@ -109,26 +109,35 @@ async function unfollow_stage(driver, XPATH_parent_element) {
             let userScrappedText = await user.getText()
     
             // Kullanıcının takip durumu inceleniyor
-            if (userScrappedText.includes('Seni takip ediyor') !== true) {
+            if (userScrappedText.includes('Seni takip ediyor') !== true && unfollowed_users.includes(userScrappedText.split('\n')[0]) !== true) {
                 // Seni takip etmiyor!
     
                 let XPATH_user_unfollow_button = '//*[@id="react-root"]/div/div/div/main/div/div[2]/div/div[1]/div/div/div[2]/section/div/div/div/div[' + indexer + ']/div/div/div/div[2]/div[1]/div[2]/div'
                 // Takip etmeyen kullanıcının takibi bırak buton elementine erişim sağlanılıyor
                 let user_unfollow_button = await driver.findElement(By.xpath(XPATH_user_unfollow_button))
-    
-                // Takibi bırak butonuna tıklanılıyor
-                await user_unfollow_button.click()
-    
-                await sleep(100)
 
-                let XPATH_confirm_unfollow_button = '//*[@id="react-root"]/div/div/div[1]/div/div/div/div/div[2]/div[2]/div[3]/div[2]'
-                // Takibi bırakma onay butonuna erişim sağlanılıyor
-                let confirm_unfollow_button = await driver.findElement(By.xpath(XPATH_confirm_unfollow_button))
-                
-                // Takibi bırakma onay butonuna tıklanılıyor
-                await confirm_unfollow_button.click()
+                let XPATH_user_unfollow_button_text = XPATH_user_unfollow_button + '/div/span/span'
+                // Unfollow buttonunun textine erişim sağlanılıyor.
+                let user_unfollow_button_text = await driver.findElement(By.xpath(XPATH_user_unfollow_button_text))
 
-                await sleep(100)
+                // Takipten çıkılmamışsa çık!
+                if ((await user_unfollow_button_text.getText()).includes('Takip ediliyor') === true) {
+                    // Takibi bırak butonuna tıklanılıyor
+                    await user_unfollow_button.click()
+
+                    await sleep(100)
+
+                    let XPATH_confirm_unfollow_button = '//*[@id="react-root"]/div/div/div[1]/div/div/div/div/div[2]/div[2]/div[3]/div[2]'
+                    // Takibi bırakma onay butonuna erişim sağlanılıyor
+                    let confirm_unfollow_button = await driver.findElement(By.xpath(XPATH_confirm_unfollow_button))
+
+                    // Takibi bırakma onay butonuna tıklanılıyor
+                    await confirm_unfollow_button.click()
+
+                    console.log("Takipten çıkıldı: " + userScrappedText.split('\n')[0])
+
+                    await sleep(100)
+                }
             } else {
                 //Seni takip ediyor!
                 indexer++
@@ -138,17 +147,15 @@ async function unfollow_stage(driver, XPATH_parent_element) {
     
             //Takipten çıkıldı!")
             indexer = 1
-            unfollowed_users.push({
-                "username": userScrappedText.split('\n')[0]
-            })
-
-            await sleep(100)
+            unfollowed_users.push(userScrappedText.split('\n')[0])
         } catch (error) {
+            console.log(error)
+
             if (await scroll_down_to_page(driver) === true) {
                 return unfollowed_users
             }
 
-            await sleep(100)
+            await sleep(250)
             
             indexer = 1
         }
