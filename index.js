@@ -18,18 +18,23 @@ console.log("Program başlatılıyor...");
     // Open browser
     let driver = await new Builder().forBrowser('firefox').build()
 
-    console.log("\nFAZ 1: Giriş başlatılıyor")
-    // Phase 1: LOGIN
+    console.log("\nGiriş başlatılıyor")
+    // LOGIN
     await Login.login(driver)
 
-    console.log("\nFAZ 2: Profil sayfası")
-    // Phase 2: GO TO PROFILE PAGE
+    console.log("\nProfil sayfası")
+    // GO TO PROFILE PAGE
     await Profile.go_to_profile_page(driver)
 
-    console.log("\nFAZ 3: Kaç adet kullanıcı takip ediliyor?")
-    // Phase 3: GET HOW MANY FOLLOWING USERS COUNT
+    console.log("\nKaç adet kullanıcı takip ediliyor?")
+    // GET HOW MANY FOLLOWING USERS COUNT
     let following_count = await Profile.get_followings_count(driver)
     console.log("-->" + Config.username + " " + following_count + " kişiyi takip ediyor.")
+
+    console.log("\nKaç adet kullanıcı takipçim var?")
+    // GET HOW MANY FOLLOWERS USER COUNT
+    let followers_count = await Profile.get_followers_count(driver)
+    console.log("-->" + Config.username + " " + followers_count + " kişi takipçisi var.")
 
     let input = undefined
     Readline.question(`(1)Beni takip etmeyenlerden kurtul\n(2)Beni takip edenlerden takip etmediklerimi takip et`, (option) => {

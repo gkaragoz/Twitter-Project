@@ -35,9 +35,24 @@ async function get_followings_count(driver) {
     return following_count;
 }
 
+async function get_followers_count(driver) {
+    let XPATH_followers_count_field = '//*[@id="react-root"]/div/div/div/main/div/div[2]/div/div[1]/div/div/div[2]/div/div/div[1]/div/div[5]/div[2]/a'
+
+    console.log("Takipçi kullanıcı sayısı elementinin yüklenmesi bekleniyor...")
+    // Wait to loading of element.
+    await driver.wait(until.elementLocated(By.xpath(XPATH_followers_count_field)), 10000)
+    console.log("Takipçi kullanıcı sayısı elementine erişim sağlanılıyor...")
+    let followers_count_field = await driver.findElement(By.xpath(XPATH_followers_count_field))
+    console.log("Takipçi kullanıcı sayısına erişim sağlanıyor...")
+    let followers_count = await followers_count_field.getAttribute('title')
+
+    return followers_count;
+}
+
 module.exports = {
     go_to_profile_page: go_to_profile_page,
     go_to_following_page: go_to_following_page,
     go_to_followers_page: go_to_followers_page,
-    get_followings_count: get_followings_count
+    get_followings_count: get_followings_count,
+    get_followers_count: get_followers_count
 }
