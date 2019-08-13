@@ -15,6 +15,12 @@ async function go_to_following_page(driver) {
     await driver.get('https://twitter.com/' + Config.username + '/following')
 }
 
+async function go_to_followers_page(driver) {
+    console.log("Tarayıcı takipçiler sayfasına yönlendiriliyor... " + 'https://twitter.com/' + Config.username + '/followers')
+    // Redirect to followers page related logged in user.
+    await driver.get('https://twitter.com/' + Config.username + '/followers')
+}
+
 async function get_followings_count(driver) {
     let XPATH_following_count_field = '//*[@id="react-root"]/div/div/div/main/div/div[2]/div/div[1]/div/div/div[2]/div/div/div[1]/div/div[5]/div[1]/a'
 
@@ -32,5 +38,6 @@ async function get_followings_count(driver) {
 module.exports = {
     go_to_profile_page: go_to_profile_page,
     go_to_following_page: go_to_following_page,
+    go_to_followers_page: go_to_followers_page,
     get_followings_count: get_followings_count
 }

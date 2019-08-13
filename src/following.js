@@ -4,6 +4,7 @@ const { By, until } = require('selenium-webdriver')
 const Utils = require('./utils')
 
 let unfollowed_users = []
+let followed_users = []
 
 async function unfollow(driver) {
     let XPATH_following_users_list = '//*[@id="react-root"]/div/div/div/main/div/div[2]/div/div[1]/div/div/div[2]/section/div/div/div'
@@ -79,7 +80,71 @@ async function unfollow(driver) {
     }
 }
 
+async function follow(driver) {
+    let XPATH_follower_users_list = '//*[@id="react-root"]/div/div/div/main/div/div[2]/div/div[1]/div/div/div[2]/section/div/div/div'
+    // Wait to loading of element.
+    console.log("Kullanıcılar listesi elementinin yüklenmesi bekleniyor...")
+    await driver.wait(until.elementLocated(By.xpath(XPATH_follower_users_list)), 1000)
+
+    let indexer = 1
+
+    while (true) {
+        try {
+            let XPATH_user = XPATH_follower_users_list + '/div[' + indexer + ']/div/div/div/div[2]/div[1]/div[1]/a/div/div[2]'
+    
+            // Kullanıcı elementine erişim sağlanılıyor
+            let user = await driver.findElement(By.xpath(XPATH_user))
+            let userScrappedText = await user.getText()
+    
+            // Kullanıcı inceleniyor
+            if (followed_users.includes(userScrappedText.split('\n')[0]) !== true) {
+                let XPATH_user_follow_button = '//*[@id="react-root"]/div/div/div/main/div/div[2]/div/div[1]/div/div/div[2]/section/div/div/div/div[' + indexer + ']/div/div/div/div[2]/div[1]/div[2]/div'
+                // Takip eden kullanıcının takip butonuna erişim sağlanılıyor
+                let user_follow_button = await driver.findElement(By.xpath(XPATH_user_follow_button))
+
+                let XPATH_user_follow_button_text = XPATH_user_follow_button + '/div/span/span'
+                // Follow buttonunun textine erişim sağlanılıyor.
+                let user_follow_button_text = await driver.findElement(By.xpath(XPATH_user_follow_button_text))
+
+                // Takip edilmiyorsa takip et!
+                if ((await user_follow_button_text.getText()).includes('Takip ediliyor') !== true) {
+                    // Takip et butonuna tıklanılıyor
+                    await user_follow_button.click()
+
+                    console.log("Takip edildi: " + userScrappedText.split('\n')[0])
+
+                    await Utils.sleep(100)
+                }
+            } else {
+                //Bu kullanıcıyı zaten inceledin!
+                indexer++
+    
+                continue
+            }
+    
+            //Takip edildi!")
+            indexer = 1
+            followed_users.push(userScrappedText.split('\n')[0])
+        } catch (error) {
+            if (error.name === 'NoSuchElementError') {
+                console.log('NoSuchElementError: ' + 'Muhtemelen şuanki sayfada herkesi takip ediyorum...')
+            } else {
+                console.log('İncelenmesi gereken bir hata: ' + error)
+            }
+
+            if (await Utils.scroll_down_to_page(driver) === true) {
+                return followed_users
+            }
+
+            await Utils.sleep(250)
+            
+            indexer = 1
+        }
+    }
+}
+
 module.exports = {
     unfollow: unfollow,
+    follow: follow,
     get_unfollowed_users: unfollowed_users
 }
