@@ -48,8 +48,14 @@ console.log("Program başlatılıyor...");
             input == undefined
         } else if (option.includes('3') && option.includes(' ')) {
             let word = option.split(' ')[1]
-            Search.go_to_search_in_last_tweets(driver, '%23iremsak')
-            Search.process_last_x_tweets(driver, 5)
+            Search.go_to_search_in_last_tweets(driver, 'çikolata')
+
+            options = {
+                "limit": 5,
+                "like": true,
+                "follow": false
+            }
+            Search.process_last_x_tweets(driver, options)
         } else {
             console.log('Yanlış seçim yaptınız.')
             input == undefined

@@ -12,29 +12,40 @@ async function go_to_search_in_last_tweets(driver, word) {
     await driver.get(search_query)
 }
 
-async function process_last_x_tweets(driver, count, processes) {
+async function process_last_x_tweets(driver, options) {
     let XPATH_tweets_list = '//*[@id="react-root"]/div/div/div/main/div/div[2]/div/div[1]/div/div/div[2]/div/section/div/div/div'
     // Wait to loading of element.
     console.log("Tweetler listesi elementinin yüklenmesi bekleniyor...")
     await driver.wait(until.elementLocated(By.xpath(XPATH_tweets_list)), 10000)
 
     let indexer = 1
+    let counter = 1
 
     while (true) {
+        // Limit doldu. Daha fazla işlem yapma.
+        if (counter > options.limit) {
+            break
+        }
         try {
             let XPATH_tweet = XPATH_tweets_list + '/div[' + indexer++ + ']'
-
-            // let tweet = {
-            //     owner_username: await get_tweet_owner_username(driver, XPATH_tweet),
-            //     created_date: await get_tweet_created_date(driver, XPATH_tweet),
-            //     content: await get_tweet_content(driver, XPATH_tweet)
-            // }
             
-            // console.log("Tweeti atan kişi: " + JSON.stringify(tweet))
+            let tweet = {
+                owner_username: await get_tweet_owner_username(driver, XPATH_tweet),
+                created_date: await get_tweet_created_date(driver, XPATH_tweet),
+                content: await get_tweet_content(driver, XPATH_tweet)
+            }
 
-            // await like_tweet(driver, XPATH_tweet)
-
+            console.log("Tweeti atan kişi: " + JSON.stringify(tweet))
             
+            if (options.follow === true) {
+                
+            }
+
+            if (options.like === true) {
+                await like_tweet(driver, XPATH_tweet)
+            }
+
+            counter++
         } catch (error) {
             if (error.name === 'NoSuchElementError') {
                 console.log('NoSuchElementError: ' + 'Muhtemelen şuanki sayfadaki her tweeti inceledim...')
