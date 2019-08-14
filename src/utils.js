@@ -7,8 +7,8 @@ async function sleep(milliseconds) {
     }
 }
 
-async function scroll_down_to_page(driver) {
-    let SCROLL_PAUSE_TIME = 750
+async function scroll_down_to_page(driver, scroll_pause_time) {
+    let SCROLL_PAUSE_TIME = scroll_pause_time
 
     // Get scroll height
     let last_height = await driver.executeScript("return document.body.scrollHeight")

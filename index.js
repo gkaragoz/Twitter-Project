@@ -5,6 +5,7 @@ const Login = require('./src/login')
 const Profile = require('./src/profile')
 const Config = require('./config')
 const Following = require('./src/following')
+const Search = require('./src/search')
 
 const Readline = require('readline').createInterface({
     input: process.stdin,
@@ -37,7 +38,7 @@ console.log("Program başlatılıyor...");
     console.log("-->" + Config.username + " " + followers_count + " kişi takipçisi var.")
 
     let input = undefined
-    Readline.question(`(1)Beni takip etmeyenlerden kurtul\n(2)Beni takip edenlerden takip etmediklerimi takip et`, (option) => {
+    Readline.question(`(1)Beni takip etmeyenlerden kurtul\n(2)Beni takip edenlerden takip etmediklerimi takip et\n(3 WORD)Son atılan tweetleri bul`, (option) => {
         console.log(`${option} numaralı seçeneği seçtiniz!`)
 
         if (option === '1') {
@@ -45,6 +46,10 @@ console.log("Program başlatılıyor...");
         } else if (option === '2') {
             follow_who_follow_me(driver)
             input == undefined
+        } else if (option.includes('3') && option.includes(' ')) {
+            let word = option.split(' ')[1]
+            Search.go_to_search_in_last_tweets(driver, '%23iremsak')
+            Search.process_last_x_tweets(driver, 5)
         } else {
             console.log('Yanlış seçim yaptınız.')
             input == undefined

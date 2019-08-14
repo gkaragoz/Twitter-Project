@@ -77,7 +77,7 @@ async function unfollow_last_x_users(driver, count) {
                 console.log('İncelenmesi gereken bir hata: ' + error)
             }
 
-            if (await Utils.scroll_down_to_page(driver) === true) {
+            if (await Utils.scroll_down_to_page(driver, 750) === true) {
                 return users
             }
 
@@ -151,7 +151,7 @@ async function unfollow(driver) {
                 console.log('İncelenmesi gereken bir hata: ' + error)
             }
 
-            if (await Utils.scroll_down_to_page(driver) === true) {
+            if (await Utils.scroll_down_to_page(driver, 750) === true) {
                 return unfollowed_users
             }
 
@@ -214,7 +214,7 @@ async function follow(driver) {
                 console.log('İncelenmesi gereken bir hata: ' + error)
             }
 
-            if (await Utils.scroll_down_to_page(driver) === true) {
+            if (await Utils.scroll_down_to_page(driver, 750) === true) {
                 return followed_users
             }
 
